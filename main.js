@@ -78,7 +78,7 @@ function Floaty() {
             if (state==false) {//开始脚本
                 window.start.text("停止");//切换显示文字
                 toastLog("开始");
-                //此处预计添加脚本启动
+                //此处预计添加启动脚本
                 state=true;
                 setTimeout(function () {
                     if (window.start.text() == "停止") {
@@ -89,7 +89,7 @@ function Floaty() {
                 state = false;
                 window.start.text("开始");
                 toastLog("停止");
-                //此处预计添加脚本停止
+                //此处预计添加停止脚本
             }
         }
         return true;
