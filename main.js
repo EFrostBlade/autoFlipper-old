@@ -11,6 +11,7 @@ if (!$floaty.checkPermission()) {
     exit();
 } 
 */
+//console.show();
 Floaty();
 function Floaty() {
     window = floaty.rawWindow(
@@ -67,19 +68,17 @@ function Floaty() {
     }
     window.exit.setOnTouchListener(function (view, event) {
         if (event.getAction() == event.ACTION_UP) {//点击退出按钮
-            toastLog("关闭脚本...");
-            window.close();
-            exit();
+            engines.stopAllAndToast();//停止所有正在运行的脚本并显示停止的脚本数量
         }
         return true;
     });
     window.start.setOnTouchListener(function (view, event) {
         if (event.getAction() == event.ACTION_UP) {//点击开始/停止按钮
-            if (state==false) {//开始脚本
+            if (state == false) {//开始脚本
                 window.start.text("停止");//切换显示文字
                 toastLog("开始");
-                //此处预计添加启动脚本
-                state=true;
+                var menu = engines.execScriptFile("./menu.js");//唤起菜单
+                state = true;
                 setTimeout(function () {
                     if (window.start.text() == "停止") {
                         liststate();
@@ -89,7 +88,10 @@ function Floaty() {
                 state = false;
                 window.start.text("开始");
                 toastLog("停止");
-                //此处预计添加停止脚本
+                var e = engines.all();
+                for (let i = 0; i < e.length - 1; i++) {
+                    e[i].forceStop();
+                }
             }
         }
         return true;
