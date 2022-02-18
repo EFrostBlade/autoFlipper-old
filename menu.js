@@ -1,7 +1,7 @@
 "ui";
 //console.show();
 ui.layout(
-    <vertical id="菜单" gravity="right" bg="#66ccff" alpha="1" minHeight="1000px" minWidth="500px">
+    <vertical id="菜单" gravity="right" bg="#66ccff" alpha="1">
         <checkbox id="铃铛" text="铃铛"></checkbox>//复选框
         <checkbox id="素材" text="素材"></checkbox>
         <vertical id="素材列表" marginLeft="50">
@@ -190,7 +190,6 @@ ui.崩坏5.on("check", (checked) => {
 });
 
 ui.start.on("click", () => {
-    toastLog("点击开始");
     /*var state = new Array(sc1, sc2, sc3, sc4, sc5, bh1, bh2, bh3, bh4, bh5);
     state.forEach(function (element, index) {
         if (element == true) {
@@ -238,17 +237,15 @@ ui.start.on("click", () => {
             };
         };
     });*/
-    engines.execScriptFile("./function.js");
+    fun=engines.execScriptFile("./function.js");
     log(ld);
     if (ld == true) {
         setTimeout(function () {
-            toastLog("发送铃铛");
             events.broadcast.emit("ring");
         }, 3000);
     }
     return true;
 });
 events.broadcast.on("begin", function () {
-    log("后台");
     activity.moveTaskToBack(true);//脚本移至后台
 });

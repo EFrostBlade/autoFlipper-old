@@ -1,9 +1,9 @@
 {
   "assets": [],
   "build": {
-    "build_id": "DC17A440-3",
-    "build_number": 3,
-    "build_time": 1645091890175,
+    "build_id": "B144CFB4-8",
+    "build_number": 8,
+    "build_time": 1645187637174,
     "release": false
   },
   "encryptLevel": 0,
@@ -30,5 +30,5 @@
   },
   "scripts": {},
   "versionCode": 1,
-  "versionName": "1.0.0"
+  "versionName": "1.0.4"
 }

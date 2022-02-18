@@ -29,6 +29,8 @@ function Floaty() {
     setInterval(() => { }, 1000);
     window.list.visibility = 8;//visibility属性决定了悬浮窗是否显示，8为隐藏，0为显示
     state = false;//脚本运行状态
+    place = true;//true为悬浮球处于左侧
+    prompt = null;
     var x = 0,
         y = 0;
     var windowX, windowY;
@@ -47,9 +49,19 @@ function Floaty() {
                     windowY + (event.getRawY() - y));//随移动变化位置
                 if (window.getX() < device.width / 2) {
                     window.setPosition(0, window.getY());
+                    place = true;
                 } else {
-                    window.setPosition(device.width - 60, window.getY())
+                    window.setPosition(device.width - 120, window.getY())
+                    place = false;
                 }//贴边停靠
+                if (prompt == null) { } else {
+                    if (place == true) {
+                        prompt.setPosition(120, window.getY() + 35);
+                    } else {
+                        prompt.setPosition(device.width - 420, window.getY() + 35);
+
+                    }
+                }
                 return true;
             case event.ACTION_UP://监听弹起手指
                 if (Math.abs(event.getRawY() - y) < 5 && Math.abs(event.getRawX() - x) < 5) {
@@ -77,7 +89,7 @@ function Floaty() {
             if (state == false) {//开始脚本
                 window.start.text("停止");//切换显示文字
                 toastLog("开始");
-                var menu = engines.execScriptFile("./menu.js");//唤起菜单
+                menu = engines.execScriptFile("./menu.js");//唤起菜单
                 state = true;
                 setTimeout(function () {
                     if (window.start.text() == "停止") {
@@ -85,6 +97,7 @@ function Floaty() {
                     }
                 }, 3000)//三秒不点击停止，则隐藏列表       
             } else {//停止脚本
+                let c = menu.getEngine();
                 state = false;
                 window.start.text("开始");
                 toastLog("停止");
@@ -97,3 +110,27 @@ function Floaty() {
         return true;
     });
 }
+events.broadcast.on("begin", function () {
+    Prompt();
+});//脚本开始运行后启动prompt悬浮窗
+function Prompt() {
+    prompt = floaty.rawWindow(
+        <frame id="box" bg="#66ccff" alpha="0.5" minHeight="60px" minWidth="300px" gravity="center">
+            <text id="message" text="test" textSize="18sp" minHeight="60px" minWidth="300px" gravity="center"></text>
+        </frame>
+    )
+    prompt.setTouchable(false);//设置不可点击
+    if (place == true) {
+        prompt.setPosition(120, window.getY() + 35);
+    } else {
+        prompt.setPosition(device.width - 420, window.getY() + 35);
+    }
+
+}
+events.broadcast.on("message", function (m) {
+    if (prompt == null) { } else {
+        ui.run(function () {
+            prompt.message.setText(m);
+        });
+    }
+});

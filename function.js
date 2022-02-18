@@ -1,18 +1,17 @@
 auto.waitFor();//申请无障碍权限
 $images.requestScreenCapture();//申请截图权限
-//console.show();
+console.show();
 events.broadcast.emit("begin");
-toastLog("运行功能");
-/*events.broadcast.on("ring", function () {
-    toastLog("开始铃铛");
+events.broadcast.emit("message", "开始执行任务");
+events.broadcast.on("ring", function () {
+    events.broadcast.emit("message", "开始铃铛");
     findRing();
-});*/
+});
 var ldcs = 0;//统计打了多少次铃铛
-findRing();
 function findRing() {
     var ring = images.read("./res/1920/铃铛.jpg");//读取图片
     while (1) {
-        log("查找铃铛");
+        events.broadcast.emit("message", "查找铃铛");
         sleep(1000);
         var img = captureScreen();//截图
         var p = findImage(img, ring, {
@@ -31,6 +30,7 @@ function findRing() {
 function findJoin() {
     var join = images.read("./res/1920/参加.jpg");
     while (1) {
+        events.broadcast.emit("message", "查找参加");
         sleep(1000);
         log("查找参加");
         var img = captureScreen();
@@ -41,7 +41,10 @@ function findJoin() {
             sleep(500);
             click(p.x + random(-100, 200), p.y + random(0, 50));
             join.recycle();
-            //thread1 = threads.start(findOk());//在子线程中执行查找人满、解散等操作
+            thread1 = threads.start(function () {
+                findOk();
+            });//在子线程中执行查找人满、解散等操作
+            //thread1.join(100);
             findReady();
         } else {
             continue;
@@ -49,7 +52,7 @@ function findJoin() {
     }
 }
 function findOk() {
-    var ok = images.read("./res/1920/ok.jpg");
+    ok = images.read("./res/1920/ok.jpg");
     while (1) {
         sleep(1000);
         log("查找ok");
@@ -70,7 +73,9 @@ function findOk() {
 function findReady() {
     var ready = images.read("./res/1920/准备.jpg");
     while (1) {
+        events.broadcast.emit("message", "查找准备");
         sleep(1000);
+        log("查找准备");
         var img = captureScreen();
         var p = findImage(img, ready, {
             region: [300, 1500, 150, 300],
@@ -88,7 +93,8 @@ function findReady() {
 function findCont(i) {
     var cont = images.read("./res/1920/继续.jpg");
     var k = 0;
-    while (k < 1) {
+    while (k < i) {
+        events.broadcast.emit("message", "查找继续");
         sleep(1000);
         var img = captureScreen();
         var p = findImage(img, cont, {
@@ -108,6 +114,7 @@ function findCont(i) {
 function findBeing() {
     var being = images.read("./res/1920/being.jpg");
     while (1) {
+        events.broadcast.emit("message", "等待游戏开始");
         sleep(1000);
         var img = captureScreen();
         var p = findImage(img, being, {
@@ -115,8 +122,10 @@ function findBeing() {
         });
         if (p) {
             being.recycle();
-            //if (thread1)
-            //    thread1.interrupt();
+            if (thread1) {
+                thread1.interrupt();
+                ok.recycle();
+            }
             findCont(3);
         } else {
             continue;
@@ -126,6 +135,7 @@ function findBeing() {
 function findLeave() {
     var leave = images.read("./res/1920/离开.jpg");
     while (1) {
+        events.broadcast.emit("message", "查找离开");
         sleep(1000);
         var img = captureScreen();
         var p = findImage(img, leave, {
